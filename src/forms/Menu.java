@@ -192,12 +192,10 @@ for(int i=0;i<(totalfila);i++){
             if (submatoria.equals(Des_art)) {
                
                 if (cantisft>submatoriacf) {
-                    novmc=true; 
-                    
+                    novmc=true;                    
                     
                 }
-                
-                    
+                                   
                 }                   
             }
  if (novmc==false) { 
@@ -207,10 +205,11 @@ for(int i=0;i<(totalfila);i++){
  float itbis=Float.valueOf(Tablapafact.getValueAt(Tablapafact.getSelectedRow(),4).toString())/100; 
  //me edita los datos y me hace las operaciones
  float ncantis=Float.valueOf(cantis.getText());
+ String ncantiss=String.valueOf(ncantis);
  float ncxp=Float.valueOf(ncantis*precio_art);
  float nitbis=((itbis*precio_art)*ncantis);
  float nimport=(nitbis+ncxp);
- editin.setValueAt(cantis.getText(),Tablapafact.getSelectedRow(),2);
+ editin.setValueAt(ncantiss,Tablapafact.getSelectedRow(),2);
  editin.setValueAt(nimport,Tablapafact.getSelectedRow(),5);
  calculata();
      System.out.println(submatoria+" "+submatoriac+" cant n:"+cantisft);
@@ -228,7 +227,8 @@ for(int i=0;i<(totalfila);i++){
     String Des_art2=Tablaart.getValueAt(Tablaart.getSelectedRow(),1).toString();
     String Cant_art2ints=Tablaart.getValueAt(Tablaart.getSelectedRow(),2).toString();
     float Cant_art2int= Float.valueOf(Cant_art2ints);
-    String Cant_art2=cantis.getText();
+    float Cant_art2f=Float.valueOf(cantis.getText());
+    String Cant_art2=String.valueOf(Cant_art2f);
     float Cant_art2ft=Float.valueOf(Cant_art2);
     
     String precio_art2=Tablaart.getValueAt(Tablaart.getSelectedRow(),4).toString();
@@ -470,19 +470,13 @@ double redo=0;
    
    
 public void pasapafactar(){
-      Factinform abrirFC = new Factinform();     
-      abrirFC.clientrc.setText(Busclient.getText());
-      String tipovent;
-      if (alcontado.isSelected()) {
-        tipovent="Al contado";
-    }
-      else{
-      tipovent="A credito";
-      }
       
-      abrirFC.tipovent.setText(tipovent);
- //estos agregan el texto         
-     DefaultTableModel tmfm=(DefaultTableModel)Tablapafact.getModel();
+  if (alcontado.isSelected()) {
+    String tipovent="Al contado";
+    Factinform abrirFC = new Factinform();     
+    abrirFC.clientrc.setText(Busclient.getText());
+    abrirFC.tipovent.setText(tipovent);
+    DefaultTableModel tmfm=(DefaultTableModel)Tablapafact.getModel();
     abrirFC.Tablafactura.setModel(tmfm);
     abrirFC.subtfc.setText(String.valueOf(subtotal.getText()));
     abrirFC.totalfc.setText(String.valueOf(total.getText()));
@@ -491,6 +485,27 @@ public void pasapafactar(){
     float totalsp=Float.valueOf(totaltring)*-1;  
     abrirFC.devolvi.setText(String.valueOf(totalsp)); 
      abrirFC.setVisible(true);
+    }
+      else{
+      String tipovent="A credito";
+      FactinformC abrirFC = new FactinformC();     
+    abrirFC.clientrc.setText(Busclient.getText());
+    abrirFC.tipovent.setText(tipovent);
+    DefaultTableModel tmfm=(DefaultTableModel)Tablapafact.getModel();
+    abrirFC.Tablafactura.setModel(tmfm);
+    abrirFC.subtfc.setText(String.valueOf(subtotal.getText()));
+    abrirFC.totalfc.setText(String.valueOf(total.getText()));
+    abrirFC.itbisfc.setText(String.valueOf(itbisc.getText())); 
+    String totaltring= String.valueOf(total.getText().substring(4));
+    float totalsp=Float.valueOf(totaltring)*-1;  
+      abrirFC.setVisible(true);
+      }
+    
+    
+      
+      
+ //estos agregan el texto         
+    
          
 }
 
@@ -740,6 +755,8 @@ public void pasapafactar(){
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Cliente:");
 
+        Busclient.setEditable(false);
+
         Clientabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {},
@@ -765,10 +782,12 @@ public void pasapafactar(){
             }
         });
 
+        acredito.setBackground(new java.awt.Color(0, 51, 102));
         buttonGroup1.add(acredito);
         acredito.setForeground(new java.awt.Color(255, 255, 255));
         acredito.setText("Factura a Credito");
 
+        alcontado.setBackground(new java.awt.Color(0, 51, 102));
         buttonGroup1.add(alcontado);
         alcontado.setForeground(new java.awt.Color(255, 255, 255));
         alcontado.setText("Factura al contado");
@@ -784,6 +803,11 @@ public void pasapafactar(){
         jLabel9.setText("Nombre:");
 
         Busid.setEditable(false);
+        Busid.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BusidMouseClicked(evt);
+            }
+        });
 
         jMenuBar1.setBackground(new java.awt.Color(0, 51, 102));
         jMenuBar1.setForeground(new java.awt.Color(255, 255, 255));
@@ -1141,6 +1165,14 @@ else {
     }//GEN-LAST:event_idbuscarKeyReleased
 
     private void modifactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifactActionPerformed
+         boolean aviso=false;
+        for (int i= 0; i <=Tablapafact.getRowCount() ; i++) {
+            aviso=true;
+        }
+        if (aviso==true) {
+            JOptionPane.showMessageDialog(null,"NO HAY ARTICULOS PARA MODIFICAR");
+        }
+        else{
         String canx=String.valueOf(cantis.getText());
         if(buscar.getText().equals("")||buscar.getText().equals("0")){
         JOptionPane.showMessageDialog(null,"ARTICULO NO SELECCIONADO");
@@ -1156,7 +1188,7 @@ else {
         editafacp2();
        
         
-        }
+        }}
     }//GEN-LAST:event_modifactActionPerformed
 
     private void buscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarKeyReleased
@@ -1225,6 +1257,17 @@ Tablaart.requestFocus();
 
     }//GEN-LAST:event_PASAAFACTActionPerformed
 
+    private void BusidMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BusidMouseClicked
+   if(evt.getClickCount()==1){
+        
+        }
+      if(evt.getClickCount()==2){
+              
+     cargaclient();
+       
+       }        
+    }//GEN-LAST:event_BusidMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -1261,8 +1304,8 @@ Tablaart.requestFocus();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Busclient;
-    private javax.swing.JTextField Busid;
+    public static javax.swing.JTextField Busclient;
+    public static javax.swing.JTextField Busid;
     private javax.swing.JTable Clientabla;
     public javax.swing.JMenuItem MenuEmp;
     private javax.swing.JButton PASAAFACT;

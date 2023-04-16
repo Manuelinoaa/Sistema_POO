@@ -20,7 +20,7 @@ import java.text.DecimalFormat;
 import javax.management.Descriptor;
 import java.awt.Image;
 import javax.swing.ImageIcon;
-
+import forms.Menu;
 public class Clientform extends javax.swing.JFrame {
     Conectar con=new Conectar();
     Statement st;
@@ -31,8 +31,9 @@ public class Clientform extends javax.swing.JFrame {
         initComponents();
         cargatabla();
          buscarcli.requestFocus();
+       
     }
-
+ 
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -130,15 +131,21 @@ public class Clientform extends javax.swing.JFrame {
             }
         });
 
-        credito_tipo.setText(" ");
-
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Credito Maximo: ");
 
+        buscarcli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarcliActionPerformed(evt);
+            }
+        });
         buscarcli.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 buscarcliKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                buscarcliKeyReleased(evt);
             }
         });
 
@@ -258,7 +265,12 @@ public void cargatabla(){
         classes.Conectar objeto= new classes.Conectar();
         String queris = "INSERT INTO clientes VALUES(?,?,?)";
         PreparedStatement insertar = objeto.getConnection().prepareStatement(queris);
-        insertar.setString(1,"2");
+        int i;
+        for (i = 0; i <= tablaclient.getRowCount(); i++) {     
+        }
+        
+        String is= String.valueOf(i);
+        insertar.setString(1,is);
         insertar.setString(2,nomb_client);
         insertar.setString(3,cre_lim);
         insertar.executeUpdate();
@@ -301,14 +313,121 @@ public void cargatabla(){
         
    }
  
+ public void modifica(){
+    try{
+         Connection cargain = con.getConnection();
  
+         String id_cliente=tablaclient.getValueAt(tablaclient.getSelectedRow(),0).toString();
+       String nom_client= String.valueOf(nom_cliente.getText());
+       float creditipo= Float.valueOf(credito_tipo.getText());                           
+      String modin="UPDATE clientes SET nom_cliente='"+nom_client+"',credito_tipo='"+creditipo+"' WHERE `id_cliente` ="+id_cliente+";";
+       classes.Conectar objeto= new classes.Conectar();
+       Statement modificar = objeto.getConnection().prepareStatement(modin);   
+       int valor=modificar.executeUpdate(modin);
+       if (valor==1)
+       {
+         JOptionPane.showMessageDialog(null,"El cliente: "+id_cliente+" ha sido MODIFICADO");
+                
+       }       
+       else{
+               JOptionPane.showMessageDialog(null,"El cliente: "+id_cliente+" No existe");
+               }}
+       catch 
+       (SQLException e) 
+       {
+           System.out.print(e.toString());
+       }
+
+}
+void vaciono(){
+     String id_cliente=tablaclient.getValueAt(tablaclient.getSelectedRow(),0).toString();
+     if(nom_cliente.getText().equals(""))
+        {JOptionPane.showMessageDialog(null,"CODIGO DE ARTICULO EN BLANCO");
+         nom_cliente.requestFocus();
+         return;
+        }
+     else if(credito_tipo.getText().equals(""))
+        {JOptionPane.showMessageDialog(null,"DESCRIPCIÓN DE ARTICULO VACIO");
+         credito_tipo.requestFocus();
+         return;
+        }
+     
+     else if(id_cliente.isEmpty())
+        {JOptionPane.showMessageDialog(null,"CANTIDAD VACIO");
+        tablaclient.requestFocus();
+        return;
+        }
+}
+ 
+   public void buscatabla(){
+       Statement st;
+       try {
+             //esto carga la tabla de los articulos         
+         Connection cargain = con.getConnection();
+         DefaultTableModel modelt = new DefaultTableModel();
+         TableRowSorter<TableModel> ordenartabla = new TableRowSorter<TableModel>(modelt);
+         tablaclient.setRowSorter(ordenartabla);
+         String sql="";
+         modelt.addColumn("ID cliente");
+         modelt.addColumn("Nombre cliente");
+         modelt.addColumn("Max.Credito");
+         modelt.addColumn("Credito pendiente");
+         modelt.addColumn("Facturas");
+         tablaclient.setModel(modelt);
+         int idb=Integer.valueOf(buscarcli.getText());
+         System.out.println(idb);
+         //esto busca los artiiculos por id
+         sql="select * from clientes where id_cliente  like '%"+idb+"%' or nom_cliente like '%"+idb+"%'";        
+         String[]datart=new String[7];
+    try {
+             st=cargain.createStatement();
+             rs=st.executeQuery(sql);
+             while(rs.next()){
+             datart[0]=rs.getString(1);
+             datart[1]=rs.getString(2);
+             datart[2]=rs.getString(3);
+             datart[3]=rs.getString(4);
+             datart[4]=rs.getString(5);
+             datart[5]=rs.getString(6);
+             datart[6]=rs.getString(8);
+             modelt.addRow(datart);
+             tablaclient.setDefaultEditor(Object.class, null);
+             tablaclient.requestFocus();
+             tablaclient.setColumnSelectionInterval(0,0);
+             tablaclient.setRowSelectionInterval(0,0);
+             System.out.println(idb);
+             }
+              tablaclient.setModel(modelt);
+        } catch (SQLException e) {
+            System.out.println("error"+e);
+        }
+    }
+    catch (Exception e) {
+       }    
+   }
     private void tablaclientMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaclientMouseClicked
-        //pasar de tabla client a textbox
-        
-        String nomus=tablaclient.getValueAt(tablaclient.getSelectedRow(),1).toString();
+        //pasar de tabla client a textbox         
+      
+       if(evt.getClickCount()==1){
+         System.out.println("Se ha hecho un click");
+          String nomus=tablaclient.getValueAt(tablaclient.getSelectedRow(),1).toString();
         String tipus=tablaclient.getValueAt(tablaclient.getSelectedRow(),2).toString();
        nom_cliente.setText(nomus);
        credito_tipo.setText(tipus);
+        }
+      if(evt.getClickCount()==2){
+         
+        System.out.println("Se ha hecho doble click");
+        String clienselec=tablaclient.getValueAt(tablaclient.getSelectedRow(),1).toString();
+        String idselec=tablaclient.getValueAt(tablaclient.getSelectedRow(),0).toString();
+       Menu.Busclient.setText(clienselec);
+       Menu.Busid.setText(idselec);
+      // Menu.cargaclient();
+       this.dispose();
+       }
+       
+ 
+
     }//GEN-LAST:event_tablaclientMouseClicked
 
     private void tablaclientKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tablaclientKeyPressed
@@ -322,12 +441,54 @@ limpiador();
     }//GEN-LAST:event_nuevataActionPerformed
 
     private void modificataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificataActionPerformed
-       
+ String nom_cliente=this.nom_cliente.getText();
+        String credito_tipo=this.credito_tipo.getText();
+        if (nom_cliente.isEmpty()||credito_tipo.isEmpty()) {
+            if (nom_cliente.isEmpty()) {
+                JOptionPane.showMessageDialog(null,"NOMBRE DE CLIENTE VACIO");
+                this.nom_cliente.requestFocus();
+                return;
+            }
+            if (credito_tipo.isEmpty()) {
+                JOptionPane.showMessageDialog(null,"CREDITO VACIO");
+                this.credito_tipo.requestFocus();
+            }
+        }
+        
+        
+        int opcion = JOptionPane.showConfirmDialog(null, "Desea modificar este cliente ?", "Aviso", JOptionPane.YES_NO_OPTION);
+if (opcion == 0) {
+ System.out.print("si");
+  vaciono();
+       modifica();
+       cargatabla();
+       limpiador();      
+}
+else {
+   System.out.print("no");
+} 
+               
     }//GEN-LAST:event_modificataActionPerformed
 
     private void creataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_creataActionPerformed
-agretabla();
-cargatabla();
+        String nom_cliente=this.nom_cliente.getText();
+        String credito_tipo=this.credito_tipo.getText();
+        if (nom_cliente.isEmpty()||credito_tipo.isEmpty()) {
+            if (nom_cliente.isEmpty()) {
+                JOptionPane.showMessageDialog(null,"NOMBRE DE CLIENTE VACIO");
+                this.nom_cliente.requestFocus();
+                return;
+            }
+            if (credito_tipo.isEmpty()) {
+                JOptionPane.showMessageDialog(null,"CREDITO VACIO");
+                this.credito_tipo.requestFocus();
+            }
+        }
+        else{
+        agretabla();
+        cargatabla();
+        limpiador();
+                }
     }//GEN-LAST:event_creataActionPerformed
 
     private void ElimanataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ElimanataActionPerformed
@@ -341,6 +502,21 @@ limpiador();
        this.dispose();
        }  
     }//GEN-LAST:event_buscarcliKeyPressed
+
+    private void buscarcliKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarcliKeyReleased
+         buscatabla();
+            this.buscarcli.requestFocus();
+        if (evt.getKeyCode()==8) {
+            if (buscarcli.getText().equals("")) {
+                cargatabla();
+                this.buscarcli.requestFocus();
+            }            
+        }
+    }//GEN-LAST:event_buscarcliKeyReleased
+
+    private void buscarcliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarcliActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buscarcliActionPerformed
 
     /**
      * @param args the command line arguments
