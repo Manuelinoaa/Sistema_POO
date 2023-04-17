@@ -98,7 +98,7 @@ ResultSet rs;
         classes.Conectar objeto= new classes.Conectar();
         String queris = "INSERT INTO users VALUES(?,?,MD5(?),?,?,?)";
         PreparedStatement insertar = objeto.getConnection().prepareStatement(queris);
-        insertar.setString(1,"5");
+        insertar.setString(1,"0");
         insertar.setString(2,nom_user);
         insertar.setString(3,pass_userx);
         insertar.setString(4,tipo_user);

@@ -397,8 +397,27 @@ double redo=0;
    } 
    public void limpiador(){
      idbuscar.setText("");
-        buscar.setText("");
-    } 
+     buscar.setText("");
+     cantis.setText("");
+     Busclient.setText("");
+     Busid.setText("");
+     subtotal.setText("");
+     total.setText("");
+     itbisc.setText("");
+//esto aqui borra lo que tiene la tabla
+       DefaultTableModel tb = (DefaultTableModel) Tablapafact.getModel();
+       int JtablegetRowCount=Tablapafact.getRowCount();
+        int a = JtablegetRowCount-1;
+        for (int i = a; i >= 0; i--) {          
+        tb.removeRow(tb.getRowCount()-1);
+        }
+     
+     
+     
+     
+     
+   }
+        
    public void agregar(){
  int totalfila=Tablapafact.getRowCount();
  for(int i=0;i<(totalfila);i++){
@@ -476,6 +495,7 @@ public void pasapafactar(){
     Factinform abrirFC = new Factinform();     
     abrirFC.clientrc.setText(Busclient.getText());
     abrirFC.tipovent.setText(tipovent);
+    abrirFC.clienid.setText(Busid.getText());
     DefaultTableModel tmfm=(DefaultTableModel)Tablapafact.getModel();
     abrirFC.Tablafactura.setModel(tmfm);
     abrirFC.subtfc.setText(String.valueOf(subtotal.getText()));
@@ -487,29 +507,89 @@ public void pasapafactar(){
      abrirFC.setVisible(true);
     }
       else{
-      String tipovent="A credito";
-      FactinformC abrirFC = new FactinformC();     
+    String tipovent="A credito";
+    FactinformC abrirFC = new FactinformC();     
     abrirFC.clientrc.setText(Busclient.getText());
     abrirFC.tipovent.setText(tipovent);
+    abrirFC.idclinc.setText(Busid.getText());
     DefaultTableModel tmfm=(DefaultTableModel)Tablapafact.getModel();
     abrirFC.Tablafactura.setModel(tmfm);
     abrirFC.subtfc.setText(String.valueOf(subtotal.getText()));
     abrirFC.totalfc.setText(String.valueOf(total.getText()));
     abrirFC.itbisfc.setText(String.valueOf(itbisc.getText())); 
     String totaltring= String.valueOf(total.getText().substring(4));
+    float creditodi2=0;
     float totalsp=Float.valueOf(totaltring)*-1;  
-      abrirFC.setVisible(true);
+    String[]datart=new String[3];  
+    Statement st;       
+//    //esto para ver el balance del cliente        
+    Connection cargain = con.getConnection();
+    String sql="select * from clientes where id_cliente like "+Busid.getText();        
+    try {
+        st=cargain.createStatement();
+        rs=st.executeQuery(sql);
+        while(rs.next()){      
+        datart[1]=rs.getString(3);                              
+             }          
+        } 
+    catch (SQLException e) {
+            System.out.println("error"+e);
+        } 
+     abrirFC.credito.setText(String.valueOf( datart[1])); 
+    //desde aqui el otro
+ 
+    String[]datart2=new String[1];                  
+    String sql2="select ifnull(sum(total),0) AS total from factura where id_cliente like "+Busid.getText()+" and tipo_fact like 'A credito'";        
+    try {
+        st=cargain.createStatement();
+        rs=st.executeQuery(sql2);
+        while(rs.next()){      
+        datart2[0]=rs.getString(1);                              
+             }          
+        } 
+    
+    catch (SQLException e) {
+            System.out.println("error"+e);
+        } 
+
+    float creditodi1 =(Float.valueOf(datart[1]));
+    creditodi2 =Float.valueOf(datart2[0]);
+    float creditodi3 =creditodi1-creditodi2;
+    abrirFC.creditod.setText(String.valueOf(creditodi3));
+    float creditodi4=(Float.valueOf(totaltring));
+    if (creditodi4>=creditodi3) {
+    abrirFC.Imprimir.setEnabled(false);
       }
-    
-    
-      
-      
- //estos agregan el texto         
-    
-         
+     
+    //aqui termina el balance del cliente
+    abrirFC.setVisible(true);
+      }
+ //estos agregan el texto                     
 }
-
-
+    public static void cierre(String cierra) {
+         
+     String a;
+     a=cierra;
+     System.out.println(a);
+     if (a.equals("1")) {
+     idbuscar.setText("");
+     buscar.setText("");
+     cantis.setText("");
+     Busclient.setText("");
+     Busid.setText("");
+     subtotal.setText("");
+     total.setText("");
+     itbisc.setText("");
+     //esto aqui borra lo que tiene la tabla
+       DefaultTableModel tb = (DefaultTableModel) Tablapafact.getModel();
+       int JtablegetRowCount=Tablapafact.getRowCount();
+        int x = JtablegetRowCount-1;
+        for (int i = x; i >= 0; i--) {          
+        tb.removeRow(tb.getRowCount()-1);     
+        } 
+        
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -523,7 +603,7 @@ public void pasapafactar(){
         jScrollPane1 = new javax.swing.JScrollPane();
         Tablapafact = new javax.swing.JTable();
         recibidor = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        busida = new javax.swing.JLabel();
         buscar = new javax.swing.JTextField();
         cantis = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -561,6 +641,7 @@ public void pasapafactar(){
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jMenu6 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
 
@@ -657,8 +738,13 @@ public void pasapafactar(){
         recibidor.setForeground(new java.awt.Color(255, 255, 255));
         recibidor.setText("SALUDOYUSER");
 
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Buscar ID: ");
+        busida.setForeground(new java.awt.Color(255, 255, 255));
+        busida.setText("Buscar ID: ");
+        busida.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                busidaMouseClicked(evt);
+            }
+        });
 
         buscar.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -880,6 +966,14 @@ public void pasapafactar(){
         jMenuItem7.setText("CLIENTES");
         jMenu5.add(jMenuItem7);
 
+        jMenuItem1.setText("CUADRE DE CAJA");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem1);
+
         jMenu2.add(jMenu5);
 
         jMenuBar1.add(jMenu2);
@@ -916,7 +1010,7 @@ public void pasapafactar(){
                             .addComponent(recibidor)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel1)
+                                    .addComponent(busida)
                                     .addComponent(jLabel3))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -985,7 +1079,7 @@ public void pasapafactar(){
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(idbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)))
+                            .addComponent(busida)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1042,9 +1136,7 @@ public void pasapafactar(){
     }//GEN-LAST:event_MenuEmpActionPerformed
 
     private void jMenu6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu6ActionPerformed
-       
-       
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jMenu6ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -1073,7 +1165,6 @@ else {
 
     private void TablapafactMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TablapafactMouseClicked
 
-        limpiador();
         editafacp1();
     }//GEN-LAST:event_TablapafactMouseClicked
 
@@ -1253,7 +1344,7 @@ Tablaart.requestFocus();
         }
         else{
         pasapafactar();
-        }
+          }
 
     }//GEN-LAST:event_PASAAFACTActionPerformed
 
@@ -1267,6 +1358,16 @@ Tablaart.requestFocus();
        
        }        
     }//GEN-LAST:event_BusidMouseClicked
+
+    private void busidaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_busidaMouseClicked
+limpiador();        // TODO add your handling code here:
+    }//GEN-LAST:event_busidaMouseClicked
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    cuadrecaja ccnf= new cuadrecaja();
+        ccnf.setVisible(true);
+        
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1309,22 +1410,22 @@ Tablaart.requestFocus();
     private javax.swing.JTable Clientabla;
     public javax.swing.JMenuItem MenuEmp;
     private javax.swing.JButton PASAAFACT;
-    public javax.swing.JTable Tablaart;
-    public javax.swing.JTable Tablapafact;
-    private javax.swing.JRadioButton acredito;
+    public static javax.swing.JTable Tablaart;
+    public static javax.swing.JTable Tablapafact;
+    public static javax.swing.JRadioButton acredito;
     private javax.swing.JButton addart;
     private javax.swing.JButton addclient;
-    private javax.swing.JRadioButton alcontado;
+    public static javax.swing.JRadioButton alcontado;
     private javax.swing.JMenuItem armeti;
     public javax.swing.JMenu artmen;
     private javax.swing.JMenuItem artmereg;
-    private javax.swing.JTextField buscar;
+    public static javax.swing.JTextField buscar;
+    public static javax.swing.JLabel busida;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JTextField cantis;
+    public static javax.swing.JTextField cantis;
     private javax.swing.JMenuItem clientmenu;
-    private javax.swing.JTextField idbuscar;
-    private javax.swing.JTextField itbisc;
-    private javax.swing.JLabel jLabel1;
+    public static javax.swing.JTextField idbuscar;
+    public static javax.swing.JTextField itbisc;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1338,6 +1439,7 @@ Tablaart.requestFocus();
     private javax.swing.JMenu jMenu5;
     private javax.swing.JMenu jMenu6;
     public javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
@@ -1350,7 +1452,7 @@ Tablaart.requestFocus();
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton modifact;
     public javax.swing.JLabel recibidor;
-    private javax.swing.JTextField subtotal;
-    private javax.swing.JTextField total;
+    public static javax.swing.JTextField subtotal;
+    public static javax.swing.JTextField total;
     // End of variables declaration//GEN-END:variables
 }

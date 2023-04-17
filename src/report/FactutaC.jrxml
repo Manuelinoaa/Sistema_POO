@@ -12,6 +12,7 @@
 	<parameter name="tipovent" class="java.lang.String"/>
 	<parameter name="creditop" class="java.lang.String"/>
 	<parameter name="creditod" class="java.lang.String"/>
+	<parameter name="ncredito" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -282,14 +283,28 @@
 				<textElement textAlignment="Center">
 					<font fontName="Segoe UI" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Credito pendiente:]]></text>
+				<text><![CDATA[Credito:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="100" y="2" width="100" height="20" uuid="740c752b-8920-4957-a8f3-1cc0db7aca8a"/>
 				<textElement textAlignment="Center">
 					<font fontName="Segoe UI" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Credito disponible:]]></text>
+				<text><![CDATA[Credito ant:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="200" y="22" width="83" height="20" uuid="26eed643-265d-43c7-a02f-67e8305b81d6"/>
+				<textElement textAlignment="Center">
+					<font fontName="Segoe UI" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ncredito}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="200" y="2" width="83" height="20" uuid="7517d58c-2713-47e4-b1fb-e15a69d3a510"/>
+				<textElement textAlignment="Center">
+					<font fontName="Segoe UI" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Credito nuevo:]]></text>
 			</staticText>
 		</band>
 	</summary>
