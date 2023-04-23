@@ -38,6 +38,13 @@ import net.sf.jasperreports.view.JasperViewer;
 public class FactinformC extends javax.swing.JFrame {  
     Conectar con=new Conectar();
     ResultSet rs;
+     static String nomb;
+static String apes;
+
+public static void nombreuser(String nom,String ape) {            
+    nomb=nom;
+    apes=ape;
+ }
     public FactinformC() {
         initComponents();
         setIconImage(new ImageIcon(getClass().getResource("/img/ico.png")).getImage());
@@ -361,6 +368,7 @@ System.out.println("2");
     parametro.put("creditop",String.valueOf(credito.getText()));  
     parametro.put("creditod",String.valueOf(creditod.getText()));  
     parametro.put("ncredito",String.valueOf(creditodi3));  
+    parametro.put("empleado",nomb+" "+apes);  
 JRBeanCollectionDataSource listax= new JRBeanCollectionDataSource(listaf);
   //JasperPrint jprint=JasperFillManager.fillReport(reporte,parametro,listax);
   JasperPrint jprint=JasperFillManager.fillReport(reporte,parametro,listax);

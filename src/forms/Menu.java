@@ -580,6 +580,7 @@ public void pasapafactar(){
      subtotal.setText("");
      total.setText("");
      itbisc.setText("");
+     
      //esto aqui borra lo que tiene la tabla
        DefaultTableModel tb = (DefaultTableModel) Tablapafact.getModel();
        int JtablegetRowCount=Tablapafact.getRowCount();
@@ -640,7 +641,6 @@ public void pasapafactar(){
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
-        jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu6 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -961,10 +961,12 @@ public void pasapafactar(){
         jMenu5.add(jMenuItem5);
 
         jMenuItem6.setText("FACTURAS");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
         jMenu5.add(jMenuItem6);
-
-        jMenuItem7.setText("CLIENTES");
-        jMenu5.add(jMenuItem7);
 
         jMenuItem1.setText("CUADRE DE CAJA");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -1257,9 +1259,9 @@ else {
 
     private void modifactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifactActionPerformed
          boolean aviso=false;
-        for (int i= 0; i <=Tablapafact.getRowCount() ; i++) {
-            aviso=true;
-        }
+      //  for (int i= 0; i <=this.Tablapafact.getRowCount() ; i++) {
+        //    aviso=true;
+       // }
         if (aviso==true) {
             JOptionPane.showMessageDialog(null,"NO HAY ARTICULOS PARA MODIFICAR");
         }
@@ -1364,10 +1366,14 @@ limpiador();        // TODO add your handling code here:
     }//GEN-LAST:event_busidaMouseClicked
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-    cuadrecaja ccnf= new cuadrecaja();
+    Cuadraform ccnf= new Cuadraform();
         ccnf.setVisible(true);
         
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1444,7 +1450,6 @@ limpiador();        // TODO add your handling code here:
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
-    private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

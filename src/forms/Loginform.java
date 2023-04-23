@@ -20,7 +20,9 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.ImageIcon;
 public class Loginform extends javax.swing.JFrame {
 Conectar con;
-
+ static String tipou="";
+  static String nuser="";
+   static String auser="";
     public Loginform() {
         setIconImage(new ImageIcon(getClass().getResource("/img/ico.png")).getImage());
         getContentPane().setBackground(Color.decode("#003366"));
@@ -32,6 +34,7 @@ Conectar con;
          this.setLocationRelativeTo(null);
  classes.Conectar objeto = new classes.Conectar();
   objeto.getConnection();
+  
     }
      
 public void IniciarS()
@@ -53,19 +56,25 @@ public void IniciarS()
             Menu abrir = new Menu();
             abrir.setVisible(true); 
             this.setVisible(false);
-            String tipou=rs.getString("tipo_user");
-            String nuser=rs.getString("nomb_em");
-            String auser=rs.getString("apelli_em");
+             tipou=rs.getString("tipo_user");
+             nuser=rs.getString("nomb_em");
+             auser=rs.getString("apelli_em");
            
             //con esto se definen los roles de usuario tipo desactivar algo
             if (tipou.equals("1")) 
             { //recibidor es un texboxx que te da el saludo
                  abrir.recibidor.setText("Bienvenido, Administrador: "+nuser+" "+auser);         
-                 }
+            Cuadraform.nombreuser(nuser, auser);
+            Factinform.nombreuser(nuser, auser);
+            FactinformC.nombreuser(nuser, auser);
+            }
             if (tipou.equals("2")) 
             { 
                  
                 abrir.recibidor.setText("Bienvenido, Empleado: "+nuser+" "+auser);  
+                 Cuadraform.nombreuser(nuser, auser);
+                 Factinform.nombreuser(nuser, auser);
+                 FactinformC.nombreuser(nuser, auser);
                 abrir.MenuEmp.setEnabled(false);
               abrir.artmen.setEnabled(false);
              }
@@ -80,7 +89,11 @@ public void IniciarS()
             JOptionPane.showMessageDialog(null,"Error"+e.toString());
         }}
 
-    
+
+
+
+
+   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -236,6 +249,7 @@ else {
    System.out.print("no");}
     }//GEN-LAST:event_jButton2ActionPerformed
 
+   
     private void nom_userActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nom_userActionPerformed
         
     }//GEN-LAST:event_nom_userActionPerformed
@@ -259,10 +273,7 @@ else {
         
         //no me borres yo funciono para hacer el login con una clase
        // classes.Clasedelogin objetoClasedelogin=new classes.Clasedelogin();
-      //  objetoClasedelogin.validaruser(nom_user,pass_user);
-     
-      
-        
+      //  objetoClasedelogin.validaruser(nom_user,pass_user);     
     }//GEN-LAST:event_EntrarActionPerformed
 
     private void pass_userActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pass_userActionPerformed
@@ -302,6 +313,9 @@ else {
         }
     }//GEN-LAST:event_EntrarKeyPressed
 
+    
+
+    
     /**
      * @param args the command line arguments
      */

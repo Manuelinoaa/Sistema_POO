@@ -29,6 +29,13 @@ public class Factinform extends javax.swing.JFrame {
     Conectar con=new Conectar();
     
      ResultSet rs;
+     static String nomb;
+static String apes;
+
+public static void nombreuser(String nom,String ape) {            
+    nomb=nom;
+    apes=ape;
+ }
     public Factinform() {
         initComponents();
         setIconImage(new ImageIcon(getClass().getResource("/img/ico.png")).getImage());
@@ -318,7 +325,7 @@ public class Factinform extends javax.swing.JFrame {
             //este me manda un numero para una condicion y si se cumple me limpia el menu
             Menu.cierre("1");
             this.dispose();               
-            
+           
 
 
              
@@ -350,8 +357,12 @@ public class Factinform extends javax.swing.JFrame {
             reci= Float.valueOf(pagando.getText());
             totale = Float.valueOf(totaltring);
             devu= reci-totale;
-            if (devu<=0){
+            if (devu<0){
                 Imprimir.setEnabled(false);
+            }
+            else if (devu==0){
+                Imprimir.setEnabled(true);
+                devolvi.setText(String.valueOf(devu));
             }
             else{
                 Imprimir.setEnabled(true);}
@@ -395,6 +406,7 @@ System.out.println("2");
     parametro.put("num_fact",String.valueOf(num_fac.getText()));
     parametro.put("pagando",String.valueOf("RD$ "+pagando.getText()));
     parametro.put("devolvi",String.valueOf("RD$ "+devolvi.getText())); 
+    parametro.put("empleado",nomb+" "+apes); 
 JRBeanCollectionDataSource listax= new JRBeanCollectionDataSource(listaf);
 System.out.println("3");
   //JasperPrint jprint=JasperFillManager.fillReport(reporte,parametro,listax);
@@ -477,7 +489,7 @@ public void guardar_fact(){
    String importes= String.valueOf(Tablafactura.getValueAt(i,5));
    float cantidad=Float.valueOf(cantidads);
    float precio=Float.valueOf(precios);
-   float importe=Float.valueOf(cantidad);
+   float importe=Float.valueOf(importes);
           try {
          classes.Conectar objeto= new classes.Conectar();
               String queris = "INSERT INTO fac_detail VALUES(?,?,?,?,?,?,?)"; 

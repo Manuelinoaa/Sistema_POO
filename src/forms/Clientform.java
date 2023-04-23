@@ -21,10 +21,12 @@ import javax.management.Descriptor;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import forms.Menu;
+import static forms.Menu.Tablaart;
 public class Clientform extends javax.swing.JFrame {
     Conectar con=new Conectar();
     Statement st;
     ResultSet rs;
+    ResultSet rs2;
     public Clientform() {
          setIconImage(new ImageIcon(getClass().getResource("/img/ico.png")).getImage());
         getContentPane().setBackground(Color.decode("#003366"));
@@ -135,17 +137,15 @@ public class Clientform extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Credito Maximo: ");
 
-        buscarcli.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buscarcliActionPerformed(evt);
-            }
-        });
         buscarcli.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 buscarcliKeyPressed(evt);
             }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 buscarcliKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                buscarcliKeyTyped(evt);
             }
         });
 
@@ -221,6 +221,7 @@ public class Clientform extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 public void cargatabla(){
        Statement st;
+       Statement st2;
         try {
              //esto carga la tabla de los empleados         
          Connection cargain = con.getConnection();
@@ -231,18 +232,32 @@ public void cargatabla(){
          modelt.addColumn("Nombre cliente");
          modelt.addColumn("Max.Credito");
          modelt.addColumn("Credito pendiente");
-         modelt.addColumn("Facturas");
+         modelt.addColumn("Credito disponible");
          tablaclient.setModel(modelt);
          String sql="select * from clientes";
+         
          String[]datart=new String[5];
     try {
              st=cargain.createStatement();
              rs=st.executeQuery(sql);
+             
              while(rs.next()){
              datart[0]=rs.getString(1);
              datart[1]=rs.getString(2);
              datart[2]=rs.getString(3);
-             modelt.addRow(datart);
+            st2=cargain.createStatement();
+            String sql2="select ifnull(sum(total),0) AS total from factura where id_cliente like "+datart[0]+" and tipo_fact like 'A credito'";        
+            rs2=st2.executeQuery(sql2);           
+           while(rs2.next())
+           {datart[3]=rs2.getString(1);
+           float crem=Float.valueOf(datart[2]);
+           float crep=Float.valueOf(datart[3]);
+           float  cred = crem-crep;
+           datart[4]=String.valueOf(cred);
+           }
+            
+           
+            modelt.addRow(datart);
              //este codigo no deja editar la tabla OJOOOO!!!
              tablaclient.setDefaultEditor(Object.class, null);
              }
@@ -359,51 +374,49 @@ void vaciono(){
         }
 }
  
-   public void buscatabla(){
-       Statement st;
+  public void buscatabla1(){
+      
        try {
-             //esto carga la tabla de los articulos         
+         //esto carga la tabla de los articulos         
          Connection cargain = con.getConnection();
          DefaultTableModel modelt = new DefaultTableModel();
          TableRowSorter<TableModel> ordenartabla = new TableRowSorter<TableModel>(modelt);
          tablaclient.setRowSorter(ordenartabla);
          String sql="";
-         modelt.addColumn("ID cliente");
-         modelt.addColumn("Nombre cliente");
-         modelt.addColumn("Max.Credito");
-         modelt.addColumn("Credito pendiente");
+         modelt.addColumn("ID CLIENTE");
+         modelt.addColumn("NOMBRE CLIENTE");
+         modelt.addColumn("Credito Maximo");
+         modelt.addColumn("Credito Disponible");
          modelt.addColumn("Facturas");
          tablaclient.setModel(modelt);
-         int idb=Integer.valueOf(buscarcli.getText());
+         String idb=String.valueOf(this.buscarcli.getText());
          System.out.println(idb);
          //esto busca los artiiculos por id
-         sql="select * from clientes where id_cliente  like '%"+idb+"%' or nom_cliente like '%"+idb+"%'";        
-         String[]datart=new String[7];
-    try {
+         sql="select * from clientes where nom_cliente like '%"+idb+"%'";
+           String[]datart=new String[3];
+           try {
              st=cargain.createStatement();
              rs=st.executeQuery(sql);
              while(rs.next()){
              datart[0]=rs.getString(1);
              datart[1]=rs.getString(2);
              datart[2]=rs.getString(3);
-             datart[3]=rs.getString(4);
-             datart[4]=rs.getString(5);
-             datart[5]=rs.getString(6);
-             datart[6]=rs.getString(8);
-             modelt.addRow(datart);
-             tablaclient.setDefaultEditor(Object.class, null);
-             tablaclient.requestFocus();
-             tablaclient.setColumnSelectionInterval(0,0);
-             tablaclient.setRowSelectionInterval(0,0);
+                modelt.addRow(datart);
+            this.tablaclient.setDefaultEditor(Object.class, null);
+             this.tablaclient.requestFocus();
+             this.tablaclient.setColumnSelectionInterval(0,0);
+             this.tablaclient.setRowSelectionInterval(0,0);
              System.out.println(idb);
              }
-              tablaclient.setModel(modelt);
+              this.tablaclient.setModel(modelt);
         } catch (SQLException e) {
             System.out.println("error"+e);
         }
+   
     }
     catch (Exception e) {
        }    
+       
    }
     private void tablaclientMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaclientMouseClicked
         //pasar de tabla client a textbox         
@@ -438,6 +451,11 @@ if (evt.getKeyCode()==27) {
 
     private void nuevataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevataActionPerformed
 limpiador();
+int i=0;
+        for (i = 0; i <this.tablaclient.getRowCount(); i++) {
+            System.out.println("dentro "+i);
+        }
+        System.out.println("fuera "+i);
     }//GEN-LAST:event_nuevataActionPerformed
 
     private void modificataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificataActionPerformed
@@ -504,19 +522,27 @@ limpiador();
     }//GEN-LAST:event_buscarcliKeyPressed
 
     private void buscarcliKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarcliKeyReleased
-         buscatabla();
+//         buscatabla();
+//            this.buscarcli.requestFocus();
+//        if (evt.getKeyCode()==8) {
+//            if (buscarcli.getText().equals("")) {
+//                cargatabla();
+//                this.buscarcli.requestFocus();
+//            }            
+//        }
+    }//GEN-LAST:event_buscarcliKeyReleased
+
+    private void buscarcliKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarcliKeyTyped
+         
+            buscatabla1();
             this.buscarcli.requestFocus();
         if (evt.getKeyCode()==8) {
             if (buscarcli.getText().equals("")) {
-                cargatabla();
+               cargatabla();
                 this.buscarcli.requestFocus();
             }            
-        }
-    }//GEN-LAST:event_buscarcliKeyReleased
-
-    private void buscarcliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarcliActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_buscarcliActionPerformed
+       }
+    }//GEN-LAST:event_buscarcliKeyTyped
 
     /**
      * @param args the command line arguments
